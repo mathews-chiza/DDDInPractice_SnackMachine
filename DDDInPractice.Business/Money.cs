@@ -17,13 +17,17 @@
         public static readonly Money FiveDollar = new(0, 0, 0, 0, 1, 0);
         public static readonly Money TwentyDollar = new(0, 0, 0, 0, 0, 1);
 
+        public Money()
+        {   
+        }
+
         public Money(
             int oneCentCount,
             int tenCentCount,
             int quarterCount,
             int oneDollarCount,
             int fiveDollarCount,
-            int twentyDollarCount)
+            int twentyDollarCount) : this()
         {
             if (oneCentCount < 0)
                 throw new InvalidOperationException();

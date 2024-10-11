@@ -2,12 +2,29 @@
 
 namespace DDDInPractice.Business
 {
-    public sealed class SnackMachine : Entity
+    public class SnackMachine : Entity
     {
-        public Money MoneyInside { get; private set; } = None;
-        public Money MoneyInTransaction { get; private set; } = None;
+        public virtual Money MoneyInside { get; protected set; }
+        public virtual Money MoneyInTransaction { get; protected set; }
+        public virtual IList<Slot> Slots { get; protected set; }
 
-        public void InsertMoney(Money money)
+        public SnackMachine()
+        {
+        }
+
+        public SnackMachine(IList<Slot> slots)
+        {
+            MoneyInside = None;
+            MoneyInTransaction = None;
+            Slots = new List<Slot>
+            {
+                new Slot(this, 1, null, 0, 0),
+                new Slot(this, 2, null, 0, 0),
+                new Slot(this, 3, null, 0, 0)
+            };
+        }
+
+        public virtual void InsertMoney(Money money)
         {
             Money[] coinsAndNotes = { Cent, TenCent, Quarter, Dollar, FiveDollar, TwentyDollar };
             if (!coinsAndNotes.Contains(money))
@@ -16,15 +33,25 @@ namespace DDDInPractice.Business
             MoneyInTransaction += money;
         }
 
-        public void ReturnMoney()
+        public virtual void ReturnMoney()
         {
             MoneyInTransaction = None;
         }
 
-        public void BuySnack()
+        public virtual void BuySnack(int position)
         {
+            var slot = Slots.Single(x => x.Position == position);
+            slot.Quantity--;
             MoneyInside += MoneyInTransaction;
             MoneyInTransaction = None;
+        }
+
+        public void LoadSnacks(int position, Snack snack, int quantity, decimal price)
+        {
+            var slot = Slots.Single(x => x.Position == position);
+            slot.Snack = snack;
+            slot.Quantity = quantity;
+            slot.Price = price;
         }
     }
 }
